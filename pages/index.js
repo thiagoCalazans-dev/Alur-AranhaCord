@@ -1,46 +1,24 @@
 import { Box, Button, Text, TextField, Image } from "@skynexui/components";
 import appConfig from "../config.json";
 import Titulo from "../components/Titulo";
-
-function GlobalStyle() {
-  return (
-    <style global jsx>{`
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-        list-style: none;
-      }
-      body {
-        font-family: "Open Sans", sans-serif;
-      }
-      /* App fit Height */
-      html,
-      body,
-      #__next {
-        min-height: 100vh;
-        display: flex;
-        flex: 1;
-      }
-      #__next {
-        flex: 1;
-      }
-      #__next > * {
-        flex: 1;
-      }
-      /* ./App fit Height */
-    `}</style>
-  );
-}
-
-
+import { useEffect, useState } from "react";
+import {useRouter} from "next/router";
 
 export default function PaginaInicial() {
-  const username = "thiagoCalazans-dev";
+  const [username, setUsername] = useState("thiagoCalazans-dev");
+  const rotas = useRouter();
+  const [git, setGit] = useState({});  
+
+  
+  useEffect(() => {
+    fetch(`https://api.github.com/users/${username}`)
+    .then((response)=>response.json()
+    .then((data) => setGit(data))
+    );         
+  },[username])
 
   return (
     <>
-      <GlobalStyle />
       <Box
         styleSheet={{
           display: "flex",
@@ -64,47 +42,53 @@ export default function PaginaInicial() {
             },
             width: "100%",
             maxWidth: "400px",
-            borderRadius: "5px",           
+            borderRadius: "5px",
             paddingLeft: "0px",
             paddingRight: "0px",
             margin: "128px",
             boxShadow: "0 2px 10px 0 rgb(0 0 0 / 20%)",
             //backgroundColor: appConfig.theme.colors.neutrals['000'],
           }}
-        >  {/* Photo Area */}
-        <Box
-          styleSheet={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            maxWidth: "200px",
-            padding: "16px",
-            flex: 1,
-            minHeight: "240px",
-          }}
         >
-          <Image
+          {" "}
+          {/* Photo Area */}
+          <Box
             styleSheet={{
-              borderRadius: "50%",
-              marginBottom: "16px",
-            }}
-            src={`https://github.com/${username}.png`}
-          />
-          <Text
-            variant="body4"
-            styleSheet={{
-              color: appConfig.theme.colors.neutrals['000'],
-             // backgroundColor: appConfig.theme.colors.neutrals[900],
-              padding: "3px 10px",
-              borderRadius: "1000px",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              maxWidth: "200px",
+              padding: "16px",
+              flex: 1,
+              minHeight: "240px",
             }}
           >
-            {username}
-          </Text>
-        </Box>
-        {/* Photo Area */}
+            <Image
+              styleSheet={{
+                borderRadius: "50%",
+                marginBottom: "16px",
+              }}
+              src={`https://github.com/${username}.png`}
+            />
+            <Text
+              variant="body4"
+              styleSheet={{
+                color: appConfig.theme.colors.neutrals["000"],
+                // backgroundColor: appConfig.theme.colors.neutrals[900],
+                padding: "3px 10px",
+                borderRadius: "1000px",
+              }}
+            >                        
+            </Text>
+          </Box>
+          {/* Photo Area */}
           {/* Formulário */}
           <Box
+          onSubmit={(e) => {
+            e.preventDefault();
+            console.log(rotas)
+            rotas.push(`/chat?username=${username}`)
+          }} 
             as="form"
             styleSheet={{
               display: "flex",
@@ -122,22 +106,26 @@ export default function PaginaInicial() {
               styleSheet={{
                 marginTop: "8px",
                 marginBottom: "32px",
-                color: appConfig.theme.colors.neutrals['000'],
+                color: appConfig.theme.colors.neutrals["000"],
                 //backgroundColor: appConfig.theme.colors.neutrals[900],
               }}
             >
-              {appConfig.name}
+              {}              
+              {git.name}<br/>
+              {git.location}
             </Text>
 
             <TextField
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               fullWidth
               placeholder="Usuário"
               textFieldColors={{
                 neutral: {
-                  textColor: appConfig.theme.colors.neutrals['600'],
-                  mainColor: appConfig.theme.colors.primary['500'],
-                  mainColorHighlight: appConfig.theme.colors.neutrals['600'],
-                  backgroundColor: appConfig.theme.colors.neutrals['000'],
+                  textColor: appConfig.theme.colors.neutrals["600"],
+                  mainColor: appConfig.theme.colors.primary["500"],
+                  mainColorHighlight: appConfig.theme.colors.neutrals["600"],
+                  backgroundColor: appConfig.theme.colors.neutrals["000"],
                 },
               }}
             />
@@ -153,7 +141,7 @@ export default function PaginaInicial() {
               }}
             />
           </Box>
-          {/* Formulário */}        
+          {/* Formulário */}
         </Box>
       </Box>
     </>
