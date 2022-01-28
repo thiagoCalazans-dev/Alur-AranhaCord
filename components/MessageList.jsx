@@ -55,7 +55,6 @@ export default function MessageList(props) {
                 {new Date().toLocaleDateString()}
               </Text>
             </Box>
-            {mensagem.texto}
             {mensagem.texto.startsWith(":sticker:") ? (
               <Image src={mensagem.texto.replace(":sticker:", "")} />
             ) : (
